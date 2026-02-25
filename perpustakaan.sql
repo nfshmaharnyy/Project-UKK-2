@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 24 Feb 2026 pada 06.53
+-- Waktu pembuatan: 25 Feb 2026 pada 01.53
 -- Versi server: 10.3.16-MariaDB
 -- Versi PHP: 7.3.6
 
@@ -51,13 +51,12 @@ INSERT INTO `buku` (`id_buku`, `judul`, `penulis`, `penerbit`, `tahun_terbit`, `
 (7, 'Unwanted Bond', 'Vanesa Marcella', 'Coconut Books', 2021, 62),
 (9, '7 Prajurit Bapak', 'Wulanfadi', 'Loveable', 2022, 19),
 (10, 'Bumi dan Lukanya', 'Asabell P.', 'Loveable', 2022, 50),
-(11, 'Malioboro at Midnight', 'Skysphire', 'Bukune', 2023, 43),
+(11, 'Malioboro at Midnight', 'Skysphire', 'Bukune', 2023, 42),
 (12, 'Aku Tak Membenci Hujan', 'Sri Puji Hartini', 'Akad', 2023, 33),
 (13, 'Rumah untuk Alie', 'Luluara', 'Akad', 2022, 27),
 (14, 'Rajendra', 'Luluara', 'Akad', 2023, 40),
 (15, 'Antares', 'Rweinda', 'Loveable', 2020, 50),
-(16, 'Alvaska', 'Wulanfadi', 'Loveable', 2018, 34),
-(17, 'Antariksa', 'Tresia', 'Coconut Books', 2020, 72);
+(17, 'Antariksa', 'Tresia', 'Coconut Books', 2020, 70);
 
 -- --------------------------------------------------------
 
@@ -112,12 +111,10 @@ INSERT INTO `kategori_buku_relasi` (`id_kategori_buku`, `id_buku`, `id_kategori`
 (87, 13, 1),
 (88, 14, 1),
 (89, 15, 1),
-(90, 16, 1),
 (91, 17, 1),
 (106, 2, 3),
 (107, 5, 3),
 (109, 15, 3),
-(110, 16, 3),
 (111, 17, 3),
 (113, 6, 4),
 (114, 7, 4),
@@ -140,6 +137,15 @@ CREATE TABLE `koleksi_pribadi` (
   `id_buku` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data untuk tabel `koleksi_pribadi`
+--
+
+INSERT INTO `koleksi_pribadi` (`id_koleksi`, `id_user`, `id_buku`) VALUES
+(2, 10, 13),
+(3, 10, 4),
+(4, 10, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -152,19 +158,21 @@ CREATE TABLE `peminjaman` (
   `id_buku` int(11) DEFAULT NULL,
   `tanggal_peminjaman` date NOT NULL,
   `tanggal_pengembalian` date NOT NULL,
-  `status_peminjaman` varchar(50) NOT NULL
+  `status_peminjaman` varchar(50) NOT NULL,
+  `denda` int(11) DEFAULT 0,
+  `status_denda` enum('Belum Bayar','Lunas') DEFAULT 'Belum Bayar'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data untuk tabel `peminjaman`
 --
 
-INSERT INTO `peminjaman` (`id_peminjaman`, `id_user`, `id_buku`, `tanggal_peminjaman`, `tanggal_pengembalian`, `status_peminjaman`) VALUES
-(12, 7, 14, '2026-02-22', '2026-02-24', 'Dikembalikan'),
-(13, 7, 16, '2026-02-22', '2026-02-24', 'Dikembalikan'),
-(14, 7, 16, '2026-02-23', '2026-02-23', 'Dikembalikan'),
-(15, 7, 10, '2026-02-24', '2026-02-25', 'Dipinjam'),
-(16, 10, 5, '2026-02-24', '2026-02-25', 'Dipinjam');
+INSERT INTO `peminjaman` (`id_peminjaman`, `id_user`, `id_buku`, `tanggal_peminjaman`, `tanggal_pengembalian`, `status_peminjaman`, `denda`, `status_denda`) VALUES
+(12, 7, 14, '2026-02-22', '2026-02-24', 'Dikembalikan', 0, 'Belum Bayar'),
+(15, 7, 10, '2026-02-24', '2026-02-25', 'Dipinjam', 0, 'Belum Bayar'),
+(16, 10, 5, '2026-02-24', '2026-02-25', 'Dipinjam', 0, 'Belum Bayar'),
+(17, 7, 11, '2026-02-24', '2026-02-25', 'Dipinjam', 0, 'Belum Bayar'),
+(18, 10, 7, '2026-02-24', '2026-02-24', 'Dikembalikan', 0, 'Belum Bayar');
 
 -- --------------------------------------------------------
 
@@ -179,6 +187,13 @@ CREATE TABLE `ulasan_buku` (
   `ulasan` text NOT NULL,
   `rating` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `ulasan_buku`
+--
+
+INSERT INTO `ulasan_buku` (`ulasan_id`, `id_user`, `id_buku`, `ulasan`, `rating`) VALUES
+(2, 10, 7, 'romantis+sedihhh bangett', 5);
 
 -- --------------------------------------------------------
 
@@ -286,19 +301,19 @@ ALTER TABLE `kategori_buku_relasi`
 -- AUTO_INCREMENT untuk tabel `koleksi_pribadi`
 --
 ALTER TABLE `koleksi_pribadi`
-  MODIFY `id_koleksi` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_koleksi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  MODIFY `id_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_peminjaman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT untuk tabel `ulasan_buku`
 --
 ALTER TABLE `ulasan_buku`
-  MODIFY `ulasan_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ulasan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`
